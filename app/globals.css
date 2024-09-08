@@ -1,0 +1,134 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+:root {
+  --background-primary: rgb(255, 255, 255);
+  --background-secondary: rgb(247, 249, 251);
+  --background-tertiary: rgb(240, 244, 249);
+
+  --background-grayscale-secondary: rgb(250, 250, 250);
+
+  --font-family: '__Poppins_09fe91', '__Poppins_Fallback_09fe91';
+  --font-poppins: '__Poppins_09fe91', '__Poppins_Fallback_09fe91';
+  --font-source-sans-3: '__Source_Sans_3_736954', '__Source_Sans_3_Fallback_736954';
+
+
+  --box-shadow-btn: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.12) 0px 1px 1px 0px, rgba(64, 68, 82, 0.16) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(64, 68, 82, 0.08) 0px 2px 5px 0px;
+  --box-shadow-btn-hover: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.12) 0px 1px 1px 0px, rgba(64, 68, 82, 0.16) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(64, 68, 82, 0.08) 0px 3px 9px 0px, rgba(64, 68, 82, 0.08) 0px 2px 5px 0px;
+
+  --text-primary: #444746;
+  --text-secondary: #041e49;
+  --text-highlight: #041e49;
+  --text-inverse: rgb(0, 0, 0);
+  --text-white: rgb(255, 255, 255);
+
+  --text-home: #425466;
+  --action-home: #0a2540;
+  --action-home-hover: #6c7c8c;
+
+  --input-focus: rgb(179, 213, 235);
+
+  --action-primary: rgb(66, 133, 244);
+  --action-primary-hover: rgb(80, 147, 258);
+  --action-secondary: rgb(211, 227, 253);
+  --action-tertiary: rgb(248, 250, 253);
+
+  --edit-icons-hover: rgb(240, 241, 241);
+
+  --table-highlight: rgb(233 242 255);
+
+  --action-highlight-primary: rgb(221, 227, 234);
+  --action-highlight-primary-hover: rgb(212, 218, 225);
+  --action-highlight-secondary: rgb(231, 234, 239);
+
+  --purple-btn: #635bff;
+
+  --border: rgb(226, 222, 230);
+  --border-medium: rgb(177 176 184);
+  --border-dark: rgb(128, 134, 139);
+
+  --success: rgb(212, 237, 218);
+  --success-text: rgb(24, 98, 41);
+  --green-highlight: rgb(0, 220, 0);
+
+  --warning: rgb(255, 243, 205);
+  --warning-text: rgb(133, 100, 4);
+
+  --alert: rgb(204, 229, 255);
+  --alert-text: rgb(0, 64, 133);
+
+  --error: rgb(248, 215, 218);
+  --error-text: rgb(144, 28, 36);
+  --red-highlight: rgb(255, 0, 0);
+
+  --delete-button: rgb(225, 0, 0);
+  --delete-button-hover: rgb(245, 0, 0);
+
+  --success-button: rgb(36, 141, 60);
+  --success-button-hover: rgb(42, 161, 70);
+
+  --warning-button: rgb(196, 148, 7);
+  --warning-button-hover: rgb(208, 158, 8);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-family: var(--font-poppins);
+}
+
+
+body {
+  padding: 0;
+  margin: 0;
+  color: var(--text-primary);
+  background: var(--background-tertiary);
+}
+
+#nprogress .peg {
+  box-shadow: none !important;
+}
+
+input,
+textarea,
+button,
+select,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+#dimscreen {
+  visibility: hidden;
+  position: fixed;
+  padding: 0;
+  margin: 0;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(1px);
+  background: rgba(30, 33, 36, 0.2);
+  z-index: 101;
+  opacity: 0;
+  transition: 0.2s;
+}
+
+#dimscreen.active {
+  visibility: visible;
+  position: fixed;
+  padding: 0;
+  margin: 0;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(1px);
+  background: rgba(30, 33, 36, 0.2);
+  z-index: 101;
+  opacity: 1;
+  transition: 0.2s;
+}

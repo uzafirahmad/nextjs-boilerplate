@@ -1,0 +1,54 @@
+name: Deploy to GCR
+# Controls when the workflow will run
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  deploy:
+    name: Deploying to Google Cloud Run
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Creating Runtime .env
+        run: |
+          touch .env
+          echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> .env
+
+      - name: Connect to gcloud
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ secrets.PROJECT_ID }} # Corrected typo (PROJECTID)
+          credentials_json: ${{ secrets.SERVICE_ACCOUNT }}
+      - name: Listing gcloud configurations (optional)
+        run: gcloud config list # Optional step for debugging
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: gcr.io/${{ secrets.PROJECT_ID }}/website-frontend
+      - name: Deploy to Cloud Run
+        run: gcloud run deploy website-frontend --image gcr.io/${{ secrets.PROJECT_ID }}/website-frontend --platform managed --project=${{ secrets.PROJECT_ID }} --allow-unauthenticated --region europe-west2
+      - name: Delete previous images (optional)
+        run: | # Optional step for managing image versions
+          images=$(gcloud container images list-tags gcr.io/${{ secrets.PROJECT_ID }}/website-frontend --format='get(digest)')
+          images_array=()
+          while IFS= read -r line; do
+            images_array+=("$line")
+          done <<< "$images"
+          for (( i=1; i<${#images_array[@]}; i++ ))
+          do
+            gcloud container images delete gcr.io/${{ secrets.PROJECT_ID }}/website-frontend@${images_array[i]} --force-delete-tags --quiet
+          done

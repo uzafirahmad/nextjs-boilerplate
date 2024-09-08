@@ -1,0 +1,94 @@
+@import '../../globals.css';
+
+#reverify_container {
+    padding: 25px 15px;
+}
+
+#reverify_h2 {
+    font-weight: 500;
+    color: var(--text-highlight);
+    margin: 0;
+    text-align: left;
+    font-size: 28px;
+}
+
+.reverify_child_body_text {
+    margin-top: 24px;
+    text-align: left;
+    font-size: 20px;
+}
+
+#reverify_child_body_buttons {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    margin-top: 24px;
+}
+
+.reverify_child_body_buttonzz {
+    margin-bottom: 16px;
+    cursor: pointer;
+    background-color: var(--action-primary);
+    color: var(--text-white);
+    height: 36px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 4px 12px;
+    text-decoration: none;
+}
+
+.reverify_child_body_buttonzz:nth-child(1) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.reverify_child_body_buttonzz:nth-child(1):hover {
+    background-color: var(--action-primary-hover);
+}
+
+.reverify_child_body_buttonzz:nth-child(2) {
+    background-color: var(--text-white);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    font-weight: 500;
+    box-shadow: var(--box-shadow-btn);
+}
+
+.reverify_child_body_buttonzz:nth-child(2):hover {
+    box-shadow: var(--box-shadow-btn-hover);
+}
+
+#reverify_href {
+    color: var(--action-primary);
+    margin-left: 5px;
+}
+
+#reverify_loader {
+    width: 16px;
+    height: 16px;
+    border: 3px solid var(--text-primary);
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+    margin-left: 5px;
+    opacity: 0.7;
+    position: relative;
+    top: 2px;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
