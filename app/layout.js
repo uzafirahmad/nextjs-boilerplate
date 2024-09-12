@@ -82,7 +82,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <Script
         async
-        src='https://www.googletagmanager.com/gtag/js?id=G-B3FZ056QG9'
+        src='https://www.googletagmanager.com/gtag/js?id=G-xyz'
         strategy="afterInteractive"
       />
       <Script id="google-analytics" strategy="afterInteractive">
@@ -91,7 +91,7 @@ export default function RootLayout({ children }) {
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-B3FZ056QG9');
+  gtag('config', 'G-xyz');
       `}
       </Script>
       <body className={`${poppins.variable} ${source_sans_3.variable}`}>
