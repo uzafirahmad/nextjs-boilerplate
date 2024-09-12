@@ -30,27 +30,27 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "Ordion",
-  description: "Ordion allows you to create your own e-commerce website. Start selling online with powerful tools designed to help you grow your business.",
-  keywords: "Ordion, e-commerce platform, create online store, build e-commerce website, e-commerce templates, online shop builder, start selling online, e-commerce tools, website builder, online business, e-commerce solution",
+  title: "",
+  description: "",
+  keywords: "",
   alternates: {
-    canonical: "https://ordion.io",
+    canonical: "",
   },
   robots: "index, follow",
   viewport: "width=device-width, initial-scale=1",
   charset: "UTF-8",
   language: "en",
-  author: "Ordion Team",
-  publisher: "Ordion Inc.",
-  applicationName: "Ordion",
+  author: "",
+  publisher: "",
+  applicationName: "",
   twitter: {
     card: 'summary_large_image',
-    title: 'Ordion',
-    description: "Ordion allows you to create your own e-commerce website. Start selling online with powerful tools designed to help you grow your business.",
+    title: '',
+    description: "",
     images: [
       {
-        url: 'https://ordion.io/seo_banner.jpg',
-        alt: 'Ordion Seo Banner',
+        url: '',
+        alt: '',
         width: 1200,
         height: 630,
       }
@@ -59,20 +59,20 @@ export const metadata = {
     type: 'website',
   },
   openGraph: {
-    title: 'Ordion',
-    description: "Ordion allows you to create your own e-commerce website. Start selling online with powerful tools designed to help you grow your business.",
-    url: 'https://ordion.io',
+    title: '',
+    description: "",
+    url: '',
     type: 'website',
     locale: 'en_US',
     images: [
       {
-        url: 'https://ordion.io/seo_banner.jpg',
-        alt: 'Ordion Seo Banner',
+        url: '',
+        alt: '',
         width: 1200,
         height: 630,
       }
     ],
-    site_name: 'Ordion',
+    site_name: '',
   },
 };
 
