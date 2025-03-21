@@ -1,0 +1,101 @@
+name: Deploy to GCR
+
+on:
+  push:
+    branches: [master, dev]
+  pull_request:
+    branches: [master, dev]
+  workflow_dispatch:
+
+jobs:
+  deploy-production:
+    name: Deploy to Production (GCR)
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Creating Runtime .env.production
+        run: |
+          touch .env.production
+          echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> .env.production
+          echo "NEXT_PUBLIC_NODE_ENV=${{ secrets.NEXT_PUBLIC_NODE_ENV }}" >> .env.production
+
+      - name: Connect to gcloud
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ secrets.PROJECT_ID }}
+          credentials_json: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: gcr.io/${{ secrets.PROJECT_ID }}/admin-panel:production
+
+      - name: Deploy to Cloud Run
+        run: gcloud run deploy ordion-admin-panel --image gcr.io/${{ secrets.PROJECT_ID }}/admin-panel:production --platform managed --project=${{ secrets.PROJECT_ID }} --allow-unauthenticated --region europe-west2
+
+      - name: Delete previous images (optional)
+        run: |
+          images=$(gcloud container images list-tags gcr.io/${{ secrets.PROJECT_ID }}/admin-panel --format='get(digest)' --filter='tags:production')
+          images_array=()
+          while IFS= read -r line; do
+            images_array+=("$line")
+          done <<< "$images"
+          for (( i=1; i<${#images_array[@]}; i++ ))
+          do
+            gcloud container images delete gcr.io/${{ secrets.PROJECT_ID }}/admin-panel@${images_array[i]} --force-delete-tags --quiet
+          done
+
+  deploy-development:
+    name: Deploy to Development (GCR)
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Creating Runtime .env.production
+        run: |
+          touch .env.production
+          echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL_DEV }}" >> .env.production
+          echo "NEXT_PUBLIC_NODE_ENV=${{ secrets.NEXT_PUBLIC_NODE_ENV }}" >> .env.production
+
+      - name: Connect to gcloud
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ secrets.PROJECT_ID }}
+          credentials_json: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: gcr.io/${{ secrets.PROJECT_ID }}/admin-panel:development
+
+      - name: Deploy to Cloud Run (Development)
+        run: gcloud run deploy ordion-admin-panel-dev --image gcr.io/${{ secrets.PROJECT_ID }}/admin-panel:development --platform managed --project=${{ secrets.PROJECT_ID }} --allow-unauthenticated --region europe-west2
+
+      - name: Delete previous images (optional)
+        run: |
+          images=$(gcloud container images list-tags gcr.io/${{ secrets.PROJECT_ID }}/admin-panel --format='get(digest)' --filter='tags:development')
+          images_array=()
+          while IFS= read -r line; do
+            images_array+=("$line")
+          done <<< "$images"
+          for (( i=1; i<${#images_array[@]}; i++ ))
+          do
+            gcloud container images delete gcr.io/${{ secrets.PROJECT_ID }}/admin-panel@${images_array[i]} --force-delete-tags --quiet
+          done
