@@ -28,12 +28,12 @@ const Client = ({ token }) => {
                         Reset your password
                     </H3>
                     <Muted style={{ marginTop: "8px" }}>
-                        Enter your email and password below to continue
+                        Enter your new password below to reset it
                     </Muted>
                     <form onSubmit={submiteForm} className="auth_info_form">
-                        <Input required={true} style={{ marginTop: "8px" }} type="password" placeholder="New Password" />
+                        <Input required={true} style={{ marginTop: "20px" }} type="password" placeholder="New Password" />
                         <Input required={true} style={{ marginTop: "8px" }} type="password" placeholder="Confirm New Password" />
-                        <Button type='submit' style={{ marginTop: "16px" }} disabled={loading}>
+                        <Button type='submit' style={{ marginTop: "8px" }} disabled={loading}>
                             {loading ?
                                 <>
                                     <Loader2 className="animate-spin" />
