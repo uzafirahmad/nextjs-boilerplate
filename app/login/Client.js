@@ -28,7 +28,7 @@ const Client = () => {
             <div className='auth_info_container'>
                 <div className='auth_info_containe_child'>
                     <H3>
-                        Log into your account
+                        Sign into your account
                     </H3>
                     <Muted style={{ marginTop: "8px" }}>
                         Enter your email and password below to continue
