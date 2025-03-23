@@ -27,6 +27,7 @@ const Client = () => {
         apiCall({
             endpoint: `/auth/login`,
             method: 'POST',
+            retry: false,
             body: {
                 email: e.target.email.value,
                 password: e.target.password.value
