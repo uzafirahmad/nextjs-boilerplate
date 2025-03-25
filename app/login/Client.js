@@ -7,18 +7,40 @@ import MutedSmall from "@/components/typography/mutedSmall"
 import '@/app/auth.css'
 import { FcGoogle } from "react-icons/fc";
 import { Loader2 } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import apiCall from "@/utils/apiCall"
 import { toast } from "sonner"
 import { InputPassword } from "@/components/ui/inputPassword"
 import { setCookie, getCookie, deleteCookie } from 'cookies-next';
 import Link from "next/link"
 import { useRouter } from 'nextjs-toploader/app';
+import { useSearchParams } from "next/navigation"
 
 
 const Client = () => {
     const [loading, setLoading] = useState(false)
+    const [googleLoading, setGoogleLoading] = useState(false)
     const router = useRouter()
+    const searchParams = useSearchParams()
+
+    useEffect(() => {
+        const error = searchParams.get('error')
+        if (error === 'google_auth_failed') {
+            toast("Google Login Error", {
+                description: "Failed to authenticate with Google. Please try again or use email login.",
+                action: {
+                    label: "Done",
+                },
+            })
+        }
+    }, [searchParams])
+
+    const handleGoogleLogin = () => {
+        setGoogleLoading(true)
+        // Redirect to the backend Google auth route
+        window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`
+    }
+
 
     const submiteForm = async (e) => {
         e.preventDefault()
@@ -87,9 +109,18 @@ const Client = () => {
                         </MutedSmall>
                         <div className="w-[100%] bg-border h-[1px]"></div>
                     </div>
-                    <Button variant='outline'>
-                        <FcGoogle style={{ fontSize: "20px", minWidth: "20px", minHeight: "20px" }} />
-                        Google
+                    <Button variant='outline' onClick={handleGoogleLogin} disabled={googleLoading}>
+                        {googleLoading ? (
+                            <>
+                                <Loader2 className="animate-spin" />
+                                Connecting
+                            </>
+                        ) : (
+                            <>
+                                <FcGoogle style={{ fontSize: "18px", minWidth: "18px", minHeight: "18px" }} />
+                                Google
+                            </>
+                        )}
                     </Button>
                     <Muted style={{ marginTop: "24px" }}>
                         By continuing, you agree to our <Link href='/terms-of-service' style={{ textDecoration: "underline", textUnderlineOffset: "4px" }}>Terms of Service</Link> and <Link style={{ textDecoration: "underline", textUnderlineOffset: "4px" }} href='/privacy-policy'>Privacy Policy</Link>.
