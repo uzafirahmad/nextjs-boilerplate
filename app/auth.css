@@ -63,3 +63,31 @@
     text-decoration: underline;
     text-underline-offset: 4px;
 }
+
+.auth_verify_div {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+
+@media screen and (max-width: 1024px) {
+    .auth_dark_bg {
+        display: none;
+    }
+
+    .auth_info_container {
+        width: 100%;
+        left: unset;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .auth_info_containe_child {
+        max-width: none;
+        width: 100%;
+        padding: 0px 16px;
+    }
+}

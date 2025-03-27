@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import MutedSmall from "@/components/typography/mutedSmall"
 import '@/app/auth.css'
-import { Loader2 } from "lucide-react"
+import { Divide, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import apiCall from "@/utils/apiCall"
 import { toast } from "sonner"
@@ -21,6 +21,7 @@ import AuthDivider from "@/components/auth/AuthDivider"
 
 const Client = () => {
     const [loading, setLoading] = useState(false)
+
     const router = useRouter()
 
     const submitForm = async (e) => {
@@ -37,13 +38,10 @@ const Client = () => {
             },
             setLoading: setLoading,
             onSuccess: (data) => {
-                if (data.verified === true) {
-                    setCookie('refreshToken', data.refreshToken)
-                    setCookie('accessToken', data.accessToken)
-                    router.push('/')
-                } else {
-                    router.push('/verify-account')
-                }
+                console.log(data)
+                // setCookie('refreshToken', data.refreshToken)
+                // setCookie('accessToken', data.accessToken)
+                // router.push('/')
             },
             onError: (errorMessage) => {
                 toast("Login Error", {
@@ -59,34 +57,31 @@ const Client = () => {
     return (
         <>
             <div className='auth_dark_bg'></div>
-            <Button className='auth_floating_btn' variant='secondary' asChild>
-                <Link href="/register">Register</Link>
-            </Button>
             <div className='auth_info_container'>
                 <div className='auth_info_containe_child'>
                     <H3>
-                        Sign into your account
+                        Verify your account to log in
                     </H3>
                     <Muted style={{ marginTop: "8px" }}>
-                        Enter your email and password below to continue
+                        Clink the link sent to your email to verify your account. Check your spam folder in case you can't find the email.
                     </Muted>
-                    <form onSubmit={submitForm} className="auth_info_form">
-                        <Input required={true} style={{ marginTop: "20px" }} name='email' type="email" placeholder="name@example.com" />
-                        <InputPassword required={true} style={{ marginTop: "8px" }} name='password' placeholder="password" />
-                        <Link href='/forgot-password' className="auth_info_link">Forgot Password?</Link>
-                        <Button type='submit' style={{ marginTop: "8px" }} disabled={loading}>
+                    <div onSubmit={submitForm} className="auth_verify_div">
+                        <Button style={{ width: "50%" }} disabled={loading} asChild>
+                            <a href={`https://mail.google.com/`} target="_blank">Open Gmail</a>
+                        </Button>
+                        <Button onClick={() => { setLoading(true) }} variant='outline' style={{ width: "50%" }} disabled={loading}>
                             {loading ?
                                 <>
                                     <Loader2 className="animate-spin" />
-                                    Signing in
+                                    Sending Email
                                 </>
                                 :
                                 <>
-                                    Log in with Email
+                                    Resend Email
                                 </>
                             }
                         </Button>
-                    </form>
+                    </div>
                     <AuthDivider />
                     <GoogleAuth />
                     <PolicyText />

@@ -6,21 +6,142 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import MutedSmall from "@/components/typography/mutedSmall"
 import '@/app/auth.css'
-import { FcGoogle } from "react-icons/fc";
 import { useRouter } from 'nextjs-toploader/app';
 import { useState } from "react"
-import { Loader2 } from "lucide-react"
+import { Divide, Loader2 } from "lucide-react"
+import { InputPassword } from "@/components/ui/inputPassword"
+import apiCall from "@/utils/apiCall"
+import { toast } from "sonner"
+import GoogleAuth from "@/components/auth/GoogleAuth"
+import PolicyText from "@/components/auth/PolicyText"
+import AuthDivider from "@/components/auth/AuthDivider"
 
 const Client = () => {
-    const [loading, setLoading] = useState(false)
-    const [googleLoading, setGoogleLoading] = useState(false)
+    const [emailLoading, setEmailLoading] = useState(false)
+    const [usernameLoading, setUsernameLoading] = useState(false)
+    const [passwordLoading, setPasswordLoading] = useState(false)
+    const [registerStatus, setRegisterStatus] = useState('email')
+    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
     const router = useRouter()
 
-    const handleGoogleLogin = () => {
-        setGoogleLoading(true)
-        // Redirect to the backend Google auth route
-        window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/google`
+    const submitEmailForm = async (e) => {
+        e.preventDefault()
+        setEmailLoading(true)
+
+        apiCall({
+            endpoint: `/auth/check-email`,
+            method: 'POST',
+            retry: false,
+            body: {
+                email: e.target.email.value,
+            },
+            setLoading: setEmailLoading,
+            onSuccess: (data) => {
+                setEmail(e.target.email.value)
+                setRegisterStatus('username')
+            },
+            onError: (errorMessage) => {
+                toast("Email Error", {
+                    description: errorMessage,
+                    action: {
+                        label: "Done",
+                    },
+                })
+            }
+        });
     }
+
+    const submitUsernameForm = async (e) => {
+        e.preventDefault()
+        setUsernameLoading(true)
+
+        apiCall({
+            endpoint: `/auth/check-username`,
+            method: 'POST',
+            retry: false,
+            body: {
+                username: e.target.username.value,
+            },
+            setLoading: setUsernameLoading,
+            onSuccess: (data) => {
+                setUsername(e.target.username.value)
+                setRegisterStatus('password')
+            },
+            onError: (errorMessage) => {
+                toast("Username Error", {
+                    description: errorMessage,
+                    action: {
+                        label: "Done",
+                    },
+                })
+            }
+        });
+    }
+
+    const submitPasswordForm = async (e) => {
+        e.preventDefault()
+        setPasswordLoading(true)
+
+        if (e.target.confirm_password.value !== e.target.password.value) {
+            toast("Password Mismatch", {
+                description: "The passwords you entered do not match. Please try again",
+                action: {
+                    label: "Done",
+                },
+            })
+            setPasswordLoading(false)
+            return
+        }
+
+        apiCall({
+            endpoint: `/auth/check-password`,
+            method: 'POST',
+            retry: false,
+            body: {
+                password: e.target.password.value,
+            },
+            onSuccess: (data) => {
+                submitRgisterationForm(email, username, e.target.password.value)
+            },
+            onError: (errorMessage) => {
+                toast("Password Error", {
+                    description: errorMessage,
+                    action: {
+                        label: "Done",
+                    },
+                })
+            }
+        });
+    }
+
+    const submitRgisterationForm = async (email, username, password) => {
+        apiCall({
+            endpoint: `/auth/register`,
+            method: 'POST',
+            retry: false,
+            body: {
+                email: email,
+                username: username,
+                password: password,
+            },
+            setLoading: setPasswordLoading,
+            onSuccess: (data) => {
+                router.push('/verify-account')
+            },
+            onError: (errorMessage) => {
+                setRegisterStatus('email')
+                toast("Registeration Error", {
+                    description: errorMessage,
+                    action: {
+                        label: "Done",
+                    },
+                })
+            }
+        });
+    }
+
+
 
     return (
         <>
@@ -33,34 +154,70 @@ const Client = () => {
                     <H3>
                         Create an account
                     </H3>
-                    <Muted style={{ marginTop: "8px" }}>
-                        Enter your email below to create your account
-                    </Muted>
-                    <Input style={{ marginTop: "20px" }} type="email" placeholder="name@example.com" />
-                    <Button style={{ marginTop: "8px" }}>Sign up with Email</Button>
-                    <div className='auth_info_continue_master'>
-                        <div className="w-[100%] bg-border h-[1px]"></div>
-                        <MutedSmall className="uppercase text-nowrap">
-                            Or continue with
-                        </MutedSmall>
-                        <div className="w-[100%] bg-border h-[1px]"></div>
-                    </div>
-                    <Button variant='outline' onClick={handleGoogleLogin} disabled={googleLoading}>
-                        {googleLoading ? (
-                            <>
-                                <Loader2 className="animate-spin" />
-                                Connecting
-                            </>
-                        ) : (
-                            <>
-                                <FcGoogle style={{ fontSize: "18px", minWidth: "18px", minHeight: "18px" }} />
-                                Google
-                            </>
-                        )}
-                    </Button>
-                    <Muted style={{ marginTop: "24px" }}>
-                        By continuing, you agree to our <Link href='/terms-of-service' style={{ textDecoration: "underline", textUnderlineOffset: "4px" }}>Terms of Service</Link> and <Link style={{ textDecoration: "underline", textUnderlineOffset: "4px" }} href='/privacy-policy'>Privacy Policy</Link>.
-                    </Muted>
+                    {registerStatus === 'email' &&
+                        <form onSubmit={submitEmailForm} className="auth_info_form">
+                            <Muted style={{ marginTop: "8px" }}>
+                                Enter your email below to create your account
+                            </Muted>
+                            <Input style={{ marginTop: "20px" }} name='email' type="email" placeholder="name@example.com" />
+                            <Button disabled={emailLoading} style={{ marginTop: "8px" }}>
+                                {emailLoading ?
+                                    <>
+                                        <Loader2 className="animate-spin" />
+                                        Please wait
+                                    </>
+                                    :
+                                    <>
+                                        Sign up with Email
+                                    </>
+                                }
+                            </Button>
+                        </form>
+                    }
+                    {registerStatus === 'username' &&
+                        <form onSubmit={submitUsernameForm} className="auth_info_form">
+                            <Muted style={{ marginTop: "8px" }}>
+                                What will you be known by? Enter your username
+                            </Muted>
+                            <Input style={{ marginTop: "20px" }} name='username' type="username" placeholder="John Doe" />
+                            <Button disabled={usernameLoading} style={{ marginTop: "8px" }}>
+                                {usernameLoading ?
+                                    <>
+                                        <Loader2 className="animate-spin" />
+                                        Confirming
+                                    </>
+                                    :
+                                    <>
+                                        Confirm Username
+                                    </>
+                                }
+                            </Button>
+                        </form>
+                    }
+                    {registerStatus === 'password' &&
+                        <form onSubmit={submitPasswordForm} className="auth_info_form">
+                            <Muted style={{ marginTop: "8px" }}>
+                                Enter your password below to create your account
+                            </Muted>
+                            <InputPassword style={{ marginTop: "20px" }} name='password' placeholder="Password" />
+                            <InputPassword style={{ marginTop: "8px" }} name='confirm_password' placeholder="Confirm Password" />
+                            <Button disabled={passwordLoading} style={{ marginTop: "8px" }}>
+                                {passwordLoading ?
+                                    <>
+                                        <Loader2 className="animate-spin" />
+                                        Saving
+                                    </>
+                                    :
+                                    <>
+                                        Save Password
+                                    </>
+                                }
+                            </Button>
+                        </form>
+                    }
+                    <AuthDivider />
+                    <GoogleAuth />
+                    <PolicyText />
                 </div>
             </div>
         </>

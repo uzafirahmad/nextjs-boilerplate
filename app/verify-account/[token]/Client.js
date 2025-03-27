@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import MutedSmall from "@/components/typography/mutedSmall"
 import '@/app/auth.css'
-import { Loader2 } from "lucide-react"
+import { Divide, Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import apiCall from "@/utils/apiCall"
 import { toast } from "sonner"
@@ -22,6 +22,19 @@ import AuthDivider from "@/components/auth/AuthDivider"
 const Client = () => {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
+    const searchParams = useSearchParams()
+
+    useEffect(() => {
+        const error = searchParams.get('error')
+        if (error === 'google_auth_failed') {
+            toast("Google Login Error", {
+                description: "Failed to authenticate with Google. Please try again or use email login.",
+                action: {
+                    label: "Done",
+                },
+            })
+        }
+    }, [searchParams])
 
     const submitForm = async (e) => {
         e.preventDefault()
@@ -37,13 +50,10 @@ const Client = () => {
             },
             setLoading: setLoading,
             onSuccess: (data) => {
-                if (data.verified === true) {
-                    setCookie('refreshToken', data.refreshToken)
-                    setCookie('accessToken', data.accessToken)
-                    router.push('/')
-                } else {
-                    router.push('/verify-account')
-                }
+                console.log(data)
+                // setCookie('refreshToken', data.refreshToken)
+                // setCookie('accessToken', data.accessToken)
+                // router.push('/')
             },
             onError: (errorMessage) => {
                 toast("Login Error", {
@@ -78,7 +88,7 @@ const Client = () => {
                             {loading ?
                                 <>
                                     <Loader2 className="animate-spin" />
-                                    Signing in
+                                    Please wait
                                 </>
                                 :
                                 <>

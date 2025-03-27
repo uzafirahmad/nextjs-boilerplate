@@ -1,14 +1,12 @@
 import { Suspense } from "react"
 import Client from "./Client"
-import OAuthWarning from "./OAuthWarning"
 
 const page = () => {
     return (
         <>
             <Suspense>
-                <OAuthWarning />
+                <Client />
             </Suspense>
-            <Client />
         </>
     )
 }
