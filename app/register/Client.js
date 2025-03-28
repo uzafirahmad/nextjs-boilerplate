@@ -15,6 +15,7 @@ import { toast } from "sonner"
 import GoogleAuth from "@/components/auth/GoogleAuth"
 import PolicyText from "@/components/auth/PolicyText"
 import AuthDivider from "@/components/auth/AuthDivider"
+import VerifyAccount from "@/components/auth/VerifyAccount"
 
 const Client = () => {
     const [emailLoading, setEmailLoading] = useState(false)
@@ -23,6 +24,7 @@ const Client = () => {
     const [registerStatus, setRegisterStatus] = useState('email')
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
+    const [verification, setVerification] = useState(false)
     const router = useRouter()
 
     const submitEmailForm = async (e) => {
@@ -127,7 +129,15 @@ const Client = () => {
             },
             setLoading: setPasswordLoading,
             onSuccess: (data) => {
-                router.push('/verify-account')
+                apiCall({
+                    endpoint: `/auth/verify-account-email`,
+                    method: 'POST',
+                    retry: false,
+                    body: {
+                        email: email
+                    },
+                });
+                setVerification(true)
             },
             onError: (errorMessage) => {
                 setRegisterStatus('email')
@@ -151,69 +161,75 @@ const Client = () => {
             </Button>
             <div className='auth_info_container'>
                 <div className='auth_info_containe_child'>
-                    <H3>
-                        Create an account
-                    </H3>
-                    {registerStatus === 'email' &&
-                        <form onSubmit={submitEmailForm} className="auth_info_form">
-                            <Muted style={{ marginTop: "8px" }}>
-                                Enter your email below to create your account
-                            </Muted>
-                            <Input style={{ marginTop: "20px" }} name='email' type="email" placeholder="name@example.com" />
-                            <Button disabled={emailLoading} style={{ marginTop: "8px" }}>
-                                {emailLoading ?
-                                    <>
-                                        <Loader2 className="animate-spin" />
-                                        Please wait
-                                    </>
-                                    :
-                                    <>
-                                        Sign up with Email
-                                    </>
-                                }
-                            </Button>
-                        </form>
-                    }
-                    {registerStatus === 'username' &&
-                        <form onSubmit={submitUsernameForm} className="auth_info_form">
-                            <Muted style={{ marginTop: "8px" }}>
-                                What will you be known by? Enter your username
-                            </Muted>
-                            <Input style={{ marginTop: "20px" }} name='username' type="username" placeholder="John Doe" />
-                            <Button disabled={usernameLoading} style={{ marginTop: "8px" }}>
-                                {usernameLoading ?
-                                    <>
-                                        <Loader2 className="animate-spin" />
-                                        Confirming
-                                    </>
-                                    :
-                                    <>
-                                        Confirm Username
-                                    </>
-                                }
-                            </Button>
-                        </form>
-                    }
-                    {registerStatus === 'password' &&
-                        <form onSubmit={submitPasswordForm} className="auth_info_form">
-                            <Muted style={{ marginTop: "8px" }}>
-                                Enter your password below to create your account
-                            </Muted>
-                            <InputPassword style={{ marginTop: "20px" }} name='password' placeholder="Password" />
-                            <InputPassword style={{ marginTop: "8px" }} name='confirm_password' placeholder="Confirm Password" />
-                            <Button disabled={passwordLoading} style={{ marginTop: "8px" }}>
-                                {passwordLoading ?
-                                    <>
-                                        <Loader2 className="animate-spin" />
-                                        Saving
-                                    </>
-                                    :
-                                    <>
-                                        Save Password
-                                    </>
-                                }
-                            </Button>
-                        </form>
+                    {verification ?
+                        <VerifyAccount email={email} />
+                        :
+                        <>
+                            <H3>
+                                Create an account
+                            </H3>
+                            {registerStatus === 'email' &&
+                                <form onSubmit={submitEmailForm} className="auth_info_form">
+                                    <Muted style={{ marginTop: "8px" }}>
+                                        Enter your email below to create your account
+                                    </Muted>
+                                    <Input style={{ marginTop: "20px" }} name='email' type="email" placeholder="name@example.com" />
+                                    <Button disabled={emailLoading} style={{ marginTop: "8px" }}>
+                                        {emailLoading ?
+                                            <>
+                                                <Loader2 className="animate-spin" />
+                                                Please wait
+                                            </>
+                                            :
+                                            <>
+                                                Sign up with Email
+                                            </>
+                                        }
+                                    </Button>
+                                </form>
+                            }
+                            {registerStatus === 'username' &&
+                                <form onSubmit={submitUsernameForm} className="auth_info_form">
+                                    <Muted style={{ marginTop: "8px" }}>
+                                        What will you be known by? Enter your username
+                                    </Muted>
+                                    <Input style={{ marginTop: "20px" }} name='username' type="username" placeholder="John Doe" />
+                                    <Button disabled={usernameLoading} style={{ marginTop: "8px" }}>
+                                        {usernameLoading ?
+                                            <>
+                                                <Loader2 className="animate-spin" />
+                                                Confirming
+                                            </>
+                                            :
+                                            <>
+                                                Confirm Username
+                                            </>
+                                        }
+                                    </Button>
+                                </form>
+                            }
+                            {registerStatus === 'password' &&
+                                <form onSubmit={submitPasswordForm} className="auth_info_form">
+                                    <Muted style={{ marginTop: "8px" }}>
+                                        Enter your password below to create your account
+                                    </Muted>
+                                    <InputPassword style={{ marginTop: "20px" }} name='password' placeholder="Password" />
+                                    <InputPassword style={{ marginTop: "8px" }} name='confirm_password' placeholder="Confirm Password" />
+                                    <Button disabled={passwordLoading} style={{ marginTop: "8px" }}>
+                                        {passwordLoading ?
+                                            <>
+                                                <Loader2 className="animate-spin" />
+                                                Saving
+                                            </>
+                                            :
+                                            <>
+                                                Save Password
+                                            </>
+                                        }
+                                    </Button>
+                                </form>
+                            }
+                        </>
                     }
                     <AuthDivider />
                     <GoogleAuth />

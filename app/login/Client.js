@@ -17,10 +17,13 @@ import { useSearchParams } from "next/navigation"
 import GoogleAuth from "@/components/auth/GoogleAuth"
 import PolicyText from "@/components/auth/PolicyText"
 import AuthDivider from "@/components/auth/AuthDivider"
+import VerifyAccount from "@/components/auth/VerifyAccount"
 
 
 const Client = () => {
     const [loading, setLoading] = useState(false)
+    const [verification, setVerification] = useState(false)
+    const [email, setEmail] = useState('')
     const router = useRouter()
 
     const submitForm = async (e) => {
@@ -42,7 +45,16 @@ const Client = () => {
                     setCookie('accessToken', data.accessToken)
                     router.push('/')
                 } else {
-                    router.push('/verify-account')
+                    apiCall({
+                        endpoint: `/auth/verify-account-email`,
+                        method: 'POST',
+                        retry: false,
+                        body: {
+                            email: e.target.email.value
+                        },
+                    });
+                    setEmail(e.target.email.value)
+                    setVerification(true)
                 }
             },
             onError: (errorMessage) => {
@@ -64,29 +76,35 @@ const Client = () => {
             </Button>
             <div className='auth_info_container'>
                 <div className='auth_info_containe_child'>
-                    <H3>
-                        Sign into your account
-                    </H3>
-                    <Muted style={{ marginTop: "8px" }}>
-                        Enter your email and password below to continue
-                    </Muted>
-                    <form onSubmit={submitForm} className="auth_info_form">
-                        <Input required={true} style={{ marginTop: "20px" }} name='email' type="email" placeholder="name@example.com" />
-                        <InputPassword required={true} style={{ marginTop: "8px" }} name='password' placeholder="password" />
-                        <Link href='/forgot-password' className="auth_info_link">Forgot Password?</Link>
-                        <Button type='submit' style={{ marginTop: "8px" }} disabled={loading}>
-                            {loading ?
-                                <>
-                                    <Loader2 className="animate-spin" />
-                                    Signing in
-                                </>
-                                :
-                                <>
-                                    Log in with Email
-                                </>
-                            }
-                        </Button>
-                    </form>
+                    {verification ?
+                        <VerifyAccount email={email} />
+                        :
+                        <>
+                            <H3>
+                                Sign into your account
+                            </H3>
+                            <Muted style={{ marginTop: "8px" }}>
+                                Enter your email and password below to continue
+                            </Muted>
+                            <form onSubmit={submitForm} className="auth_info_form">
+                                <Input required={true} style={{ marginTop: "20px" }} name='email' type="email" placeholder="name@example.com" />
+                                <InputPassword required={true} style={{ marginTop: "8px" }} name='password' placeholder="password" />
+                                <Link href='/forgot-password' className="auth_info_link">Forgot Password?</Link>
+                                <Button type='submit' style={{ marginTop: "8px" }} disabled={loading}>
+                                    {loading ?
+                                        <>
+                                            <Loader2 className="animate-spin" />
+                                            Signing in
+                                        </>
+                                        :
+                                        <>
+                                            Log in with Email
+                                        </>
+                                    }
+                                </Button>
+                            </form>
+                        </>
+                    }
                     <AuthDivider />
                     <GoogleAuth />
                     <PolicyText />
